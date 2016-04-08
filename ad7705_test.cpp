@@ -175,24 +175,57 @@ int main(int argc, char *argv[])
 	writeReg(fd,0x20);
 	// write 00001100 : CLOCKDIV=1,CLK=1,expects 4.9152MHz input clock
 	writeReg(fd,0x0C);
+	
 
+	//channel1
+	writeReg(fd,0x11);
+	// intiates a self calibration and then after that starts converting
+	writeReg(fd,0x41);
+	  ret = gpio_poll(sysfs_fd,1000);
+	  if (ret<1) {
+	    fprintf(stderr,"Poll error chennel1 set-up %d\n",ret);
+	  }
+	
+	//channel0
 	// tell the AD7705 that the next write will be the setup register
 	writeReg(fd,0x10);
 	// intiates a self calibration and then after that starts converting
 	writeReg(fd,0x40);
+		  ret = gpio_poll(sysfs_fd,1000);
+	  if (ret<1) {
+	    fprintf(stderr,"Poll error chennel0 set-up %d\n",ret);
+	  }
 
 	// we read data in an endless loop and display it
 	// this needs to run in a thread ideally
 	while (1) {
 
-	  // let's wait for data for max one second
-	  ret = gpio_poll(sysfs_fd,1000);
-	  if (ret<1) {
-	    fprintf(stderr,"Poll error %d\n",ret);
-	  }
-
+	 //channel0
 	  // tell the AD7705 to read the data register (16 bits)
 	  writeReg(fd,0x38);
+	  	  ret = gpio_poll(sysfs_fd,1000);
+	  if (ret<1) {
+	    fprintf(stderr,"Poll error read data channel0 %d\n",ret);
+	  }
+
+	  // read the data register by performing two 8 bit reads
+	  int value = readData(fd)-0x8000;
+		fprintf(stderr,"data = %d       \r",value);
+
+		// if stdout is redirected to a file or pipe, output the data
+		if( no_tty )
+		{
+			printf("%d\n", value);
+			fflush(stdout);
+		}
+	   //channel1
+	  // tell the AD7705 to read the data register (16 bits)
+	  writeReg(fd,0x39);
+	  	  ret = gpio_poll(sysfs_fd,1000);
+	  if (ret<1) {
+	    fprintf(stderr,"Poll error read data channel0 %d\n",ret);
+	  }
+
 	  // read the data register by performing two 8 bit reads
 	  int value = readData(fd)-0x8000;
 		fprintf(stderr,"data = %d       \r",value);
