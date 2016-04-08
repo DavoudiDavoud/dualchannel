@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 	//channel1
 	writeReg(fd,0x11);
 	// intiates a self calibration and then after that starts converting
-	writeReg(fd,0x41);
+	writeReg(fd,0x40);
 	  ret = gpio_poll(sysfs_fd,1000);
 	  if (ret<1) {
 	    fprintf(stderr,"Poll error chennel1 set-up %d\n",ret);
