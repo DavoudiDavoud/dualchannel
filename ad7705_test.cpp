@@ -209,15 +209,9 @@ int main(int argc, char *argv[])
 	  }
 
 	  // read the data register by performing two 8 bit reads
-	  int value = readData(fd)-0x8000;
-		fprintf(stderr,"data = %d       \r",value);
+	  int value0 = readData(fd)-0x8000;
+		
 
-		// if stdout is redirected to a file or pipe, output the data
-		if( no_tty )
-		{
-			printf("%d\n", value);
-			fflush(stdout);
-		}
 	   //channel1
 	  // tell the AD7705 to read the data register (16 bits)
 	  writeReg(fd,0x39);
@@ -227,15 +221,11 @@ int main(int argc, char *argv[])
 	  }
 
 	  // read the data register by performing two 8 bit reads
-	  int value = readData(fd)-0x8000;
-		fprintf(stderr,"data = %d       \r",value);
+	  int value1 = readData(fd)-0x8000;
+		fprintf(stderr,"data0 = %d data1 = %d      \r",value0,value1);
 
-		// if stdout is redirected to a file or pipe, output the data
-		if( no_tty )
-		{
-			printf("%d\n", value);
-			fflush(stdout);
-		}
+	
+
 	}
 
 	close(fd);
